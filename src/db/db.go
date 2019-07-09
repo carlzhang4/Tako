@@ -7,8 +7,7 @@ import(
     "strconv"
 )
 
-
-
+//sqlaccount := "root:19050817@/designer?charset=utf8"
 type UserInfo struct{
     UserName string
     UserPhone string
@@ -24,8 +23,8 @@ type Contract struct{
 
 }
 
-func SignUp(name string,phone string,password string) int{
-	db, err := sql.Open("mysql", "root:19050817@/designer?charset=utf8")
+func SignUp(name string,phone string,password string,sqlaccount string) int{
+	db, err := sql.Open("mysql", sqlaccount)
     checkErr(err)
 
     rows, err := db.Query("SELECT * FROM users WHERE name = ? or phone = ?", name,phone)
@@ -42,8 +41,8 @@ func SignUp(name string,phone string,password string) int{
     fmt.Println(afctedRows)
     return 0;
 }
-func QueryUser(name string,phone string)UserInfo{
-    db, err := sql.Open("mysql", "root:19050817@/designer?charset=utf8")
+func QueryUser(name string,phone string,sqlaccount string)UserInfo{
+    db, err := sql.Open("mysql", sqlaccount)
 	checkErr(err)
     rows, err := db.Query("SELECT name,phone,id FROM users WHERE name = ? and phone = ?", name,phone)
     var resName string
@@ -56,8 +55,8 @@ func QueryUser(name string,phone string)UserInfo{
     return UserInfo{}
 }
 
-func SignIn(phone string,password string)UserInfo{
-    db, err := sql.Open("mysql", "root:19050817@/designer?charset=utf8")
+func SignIn(phone string,password string,sqlaccount string)UserInfo{
+    db, err := sql.Open("mysql", sqlaccount)
 	checkErr(err)
     rows, err := db.Query("SELECT name,phone,id FROM users WHERE phone = ? and password = ?", phone,password)
     var resName string
@@ -70,8 +69,8 @@ func SignIn(phone string,password string)UserInfo{
     return UserInfo{"","",-1}
 }
 
-func UploadUserContract(name string,userID int,price string,description string,content string)int{
-    db, err := sql.Open("mysql", "root:19050817@/designer?charset=utf8")
+func UploadUserContract(name string,userID int,price string,description string,content string,sqlaccount string)int{
+    db, err := sql.Open("mysql", sqlaccount)
     checkErr(err)
 
     rows, err := db.Query("SELECT * FROM contract WHERE name = ? and userID = ?", name,userID)
@@ -88,8 +87,8 @@ func UploadUserContract(name string,userID int,price string,description string,c
     return 0
 }
 
-func UploadMarketContract(name string,userID int,price string,description string,content string)int{
-    db, err := sql.Open("mysql", "root:19050817@/designer?charset=utf8")
+func UploadMarketContract(name string,userID int,price string,description string,content string,sqlaccount string)int{
+    db, err := sql.Open("mysql", sqlaccount)
     checkErr(err)
 
     rows, err := db.Query("SELECT * FROM market WHERE name = ? and userID = ?", name,userID)
@@ -108,8 +107,8 @@ func UploadMarketContract(name string,userID int,price string,description string
     return 0
 }
 
-func GetUserContract(userID int) []Contract{
-    db, err := sql.Open("mysql", "root:19050817@/designer?charset=utf8")
+func GetUserContract(userID int,sqlaccount string) []Contract{
+    db, err := sql.Open("mysql", sqlaccount)
     checkErr(err)
     fmt.Println(userID)
     rows, err := db.Query("SELECT name,price,description,content,id FROM contract WHERE userID = ?", userID)
@@ -129,8 +128,8 @@ func GetUserContract(userID int) []Contract{
     return contracts
 }
 
-func GetMarketContract(userID int) []Contract{
-    db, err := sql.Open("mysql", "root:19050817@/designer?charset=utf8")
+func GetMarketContract(userID int,sqlaccount string) []Contract{
+    db, err := sql.Open("mysql", sqlaccount)
     checkErr(err)
     rows, err := db.Query("SELECT name,price,description,content,id FROM market WHERE userID = ?", userID)
 
@@ -148,8 +147,8 @@ func GetMarketContract(userID int) []Contract{
     }
     return contracts
 }
-func BuyContract(userID int,contractID int)int{
-    db, err := sql.Open("mysql", "root:19050817@/designer?charset=utf8")
+func BuyContract(userID int,contractID int,sqlaccount string)int{
+    db, err := sql.Open("mysql", sqlaccount)
     checkErr(err)
     rows, err := db.Query("SELECT name,price,userID,description,content FROM market WHERE id = ?", contractID)
     var name string

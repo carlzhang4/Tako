@@ -9,7 +9,10 @@ import (
 	"strconv"
 
 )
+var sqlaccount string
 func main(){
+	sqlaccount = "tako:Takos4incas@/designer?charset=utf8"
+
 	engine := gin.Default()
 	engine.POST("/test",test)
 	engine.POST("/auth/signup",signup)
@@ -27,9 +30,9 @@ func signup(c *gin.Context){
 	phone := c.PostForm("userPhone")
 	password := c.PostForm("userPsw")
 
-	res := db.SignUp(name,phone,password)
+	res := db.SignUp(name,phone,password,sqlaccount)
 	if res == 0{
-		user := db.QueryUser(name,phone)
+		user := db.QueryUser(name,phone,sqlaccount)
 		m,_ := json.Marshal(user)
 		c.JSON(http.StatusOK,gin.H{
 			"status":"0",
@@ -48,7 +51,7 @@ func signup(c *gin.Context){
 func signin(c *gin.Context){
 	phone := c.PostForm("userPhone")
 	password := c.PostForm("userPsw")
-	user := db.SignIn(phone,password)
+	user := db.SignIn(phone,password,sqlaccount)
 	if user.UserId == -1{
 		c.JSON(http.StatusOK,gin.H{
 			"status":"1",
@@ -68,7 +71,7 @@ func signin(c *gin.Context){
 func getusercontract(c *gin.Context){
 	userIdString := c.PostForm("userId")
 	userId,_ := strconv.Atoi(userIdString)
-	contracts := db.GetUserContract(userId)
+	contracts := db.GetUserContract(userId,sqlaccount)
 
 	m,_ := json.Marshal(contracts)
 	c.JSON(http.StatusOK,gin.H{
@@ -86,7 +89,7 @@ func postusercontract(c *gin.Context){
 	contractPrice := c.PostForm("contractPrice")
 	contractDesc := c.PostForm("contractDesc")
 	contractCont := c.PostForm("contractCont")
-	res := db.UploadUserContract(contractName,userId,contractPrice,contractDesc,contractCont)
+	res := db.UploadUserContract(contractName,userId,contractPrice,contractDesc,contractCont,sqlaccount)
 	if res == 0{
 		c.JSON(http.StatusOK,gin.H{
 			"status":"0",
@@ -104,7 +107,7 @@ func postusercontract(c *gin.Context){
 func getmarketcontract(c *gin.Context){
 	userIdString := c.PostForm("userId")
 	userId,_ := strconv.Atoi(userIdString)
-	contracts := db.GetMarketContract(userId)
+	contracts := db.GetMarketContract(userId,sqlaccount)
 
 	m,_ := json.Marshal(contracts)
 	c.JSON(http.StatusOK,gin.H{
@@ -122,9 +125,9 @@ func postmarketcontract(c *gin.Context){
 	contractPrice := c.PostForm("contractPrice")
 	contractDesc := c.PostForm("contractDesc")
 	contractCont := c.PostForm("contractCont")
-	res := db.UploadUserContract(contractName,userId,contractPrice,contractDesc,contractCont)
+	res := db.UploadUserContract(contractName,userId,contractPrice,contractDesc,contractCont,sqlaccount)
 	if res == 0{
-		db.UploadMarketContract(contractName,userId,contractPrice,contractDesc,contractCont)
+		db.UploadMarketContract(contractName,userId,contractPrice,contractDesc,contractCont,sqlaccount)
 		c.JSON(http.StatusOK,gin.H{
 			"status":"0",
 			"msg":"SUCCESS",
@@ -142,7 +145,7 @@ func buycontract(c *gin.Context){
 	userId,_ := strconv.Atoi(userIdString)
 	contractIdString := c.PostForm("contractId")
 	contractId,_ := strconv.Atoi(contractIdString)
-	res := db.BuyContract(userId,contractId)
+	res := db.BuyContract(userId,contractId,sqlaccount)
 	if res == 0{
 		c.JSON(http.StatusOK,gin.H{
 			"status":"0",
